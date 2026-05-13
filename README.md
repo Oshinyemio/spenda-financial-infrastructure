@@ -25,43 +25,7 @@
 
 ## 🏗️ System Architecture
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│                   Frontend (Private Repo)                   │
-│              React Dashboard + Mobile App                   │
-└──────────────┬──────────────────────────────────────────────┘
-               │
-┌──────────────▼──────────────────────────────────────────────┐
-│            API Gateway (REST + WebSocket)                   │
-│          Cognito Authorization + Request Routing            │
-└──────────────┬──────────────────────────────────────────────┘
-               │
-    ┌──────────┴────────────┬──────────────┬──────────────┐
-    │                       │              │              │
-┌───▼──────┐         ┌──────▼────┐   ┌────▼──────┐   ┌──▼────────┐
-│  Lambda   │         │  Lambda   │   │  Lambda   │   │  Lambda   │
-│Plaid Sync │         │Transaction│   │ Analytics │   │   Budget  │
-│           │         │ Processing │   │  Engine   │   │ Optimizer │
-└───┬──────┘         └──────┬────┘   └────┬──────┘   └──┬────────┘
-    │                       │              │            │
-    └───────────┬───────────┴──────────────┴────────────┘
-                │
-        ┌───────▼────────────────┐
-        │   DynamoDB             │
-        │   (Single-Table        │
-        │    Design Pattern)     │
-        │                        │
-        │  • Users & Accounts    │
-        │  • Transactions        │
-        │  • Budgets & Rules     │
-        │  • Analytics Cache     │
-        └────────────────────────┘
-
-    ┌────────────────┐    ┌──────────────┐
-    │  S3 + CDN      │    │  Plaid API   │
-    │  (Dashboard)   │    │  (Banking)   │
-    └────────────────┘    └──────────────┘
-```
+![Spenda System Architecture](./assets/architecture-diagram.png)
 
 ### Key Components
 
