@@ -185,6 +185,19 @@ spenda-financial-infrastructure/
 
 ---
 
+## 📸 Dashboard Preview
+
+**Main Dashboard** — Real-time account aggregation and spending overview
+![Spenda Dashboard](./assets/spenda-dashboard.png)
+
+**Cash Flow Analytics** — Monthly income vs. expenses with trend analysis
+![Cash Flow Dashboard](./assets/spenda-dashboard-cashflow.png)
+
+**Monthly Breakdown** — Category-wise spending visualization and budget progress
+![Monthly Breakdown](./assets/spenda-mothly.png)
+
+---
+
 ## 📡 API Endpoints
 
 The platform exposes 12 RESTful endpoints for complete financial management:
