@@ -1,178 +1,62 @@
-# 💎 Advanced Expense Tracker
+# Spenda: Serverless Financial Analytics Platform
 
-A multi-user, serverless expense tracker built using AWS services. Users can sign up, sign in, and manage personal expenses with receipt uploads and analytics dashboards. This project extends the foundational serverless architecture by adding authentication, S3 storage, CloudFront delivery, and QuickSight insights.
+**Spenda** is an enterprise-grade, multi-user financial ecosystem built to automate wealth tracking and budget optimization. By leveraging a fully serverless AWS architecture, the platform provides real-time financial insights while maintaining high scalability and bank-level security standards.
+
+---
+
+## 🏗️ System Architecture
+The platform is built on a cloud-native, event-driven architecture designed for cost-efficiency and performance.
+
+- **Infrastructure as Code (IaC):** 100% automated provisioning via **Terraform**, managing VPCs, IAM roles, and serverless resources.
+- **Compute:** Modular **AWS Lambda** functions (Python/Node.js) handling transaction processing and financial analytics.
+- **Data Layer:** **Amazon DynamoDB** utilizing **Single-Table Design** patterns for optimized retrieval of multi-user financial records.
+- **API Management:** **Amazon API Gateway** providing secure RESTful endpoints with integrated Cognito authorization and request throttling.
+- **Security & Identity:** **Amazon Cognito** with JWT-based authentication, MFA support, and least-privilege IAM policies.
+- **Content Delivery:** **Amazon S3** and **CloudFront** for secure, low-latency global delivery of the analytics dashboard.
+
+---
+
+## 🏦 Financial Engineering Features
+Spenda goes beyond simple tracking by implementing complex business logic and third-party integrations:
+
+- **Automated Data Ingestion:** Integrated with the **Plaid API** to synchronize real-time transaction data and account balances.
+- **Budgeting Logic:** Custom backend workflows supporting the **65/15/20 budget allocation** and "Savings-First" planning models.
+- **Wealth Analytics:** Automated net worth aggregation and cash-flow trend analysis across multiple accounts and credit cards.
+- **Scalable Reporting:** Data pipelines optimized for financial reporting and categorical spending breakdowns.
 
 ---
 
 ## 🛠 Tech Stack
-
-- ☁️ **AWS Lambda**  
-- 🌐 **Amazon API Gateway**  
-- 📦 **Amazon DynamoDB**  
-- 🛡️ **Amazon Cognito**  
-- ☁️ **Amazon S3**  
-- 🌍 **Amazon CloudFront**  
-- 📊 **Amazon QuickSight (Optional)**  
-- 🖥️ **HTML / JavaScript** (frontend)  
-- 🐍 **Python** (Lambda functions)  
-
-*Tip: Each item above reflects a core technology used. Feel free to extend as your project evolves!*
+- **Cloud:** AWS (Lambda, API Gateway, DynamoDB, Cognito, S3, CloudFront)
+- **IaC:** Terraform
+- **Languages:** Python (Backend Logic), JavaScript (Frontend/Integration)
+- **Integration:** Plaid API, RESTful APIs
+- **Tools:** Git, Postman, AWS CloudWatch
 
 ---
 
-## 🚀 Features
+## 🔒 Professional Note
+This repository serves as a technical showcase of the **Infrastructure as Code (IaC)**, **API Architecture**, and **Cloud Security** patterns implemented in the Spenda platform. 
 
-- Built using AWS services within the Free Tier (Lambda, API Gateway, DynamoDB).  
-- Lambda functions add, retrieve, and export expense data per user.  
-- Secure multi-user authentication via Amazon Cognito.  
-- Receipt image upload and storage in an S3 bucket.  
-- Hosted frontend assets on CloudFront for low-latency global delivery.  
-
----
-
-## 🏗️ Project Architecture
-This project follows a serverless architecture using AWS managed services for scalability and cost-efficiency.
-![architecture-diagram](assets/tracker-architecture.png)
-
----
-
-## 🌐 Live Demo
-Try it here: [Expense Tracker Web App](https://d1kwramx1iu2rs.cloudfront.net/)
+To maintain the project's path toward commercial release, the proprietary core business logic engines and frontend application code are maintained in a private repository. This public documentation proves the underlying engineering rigor and architectural standards applied to the project.
 
 ---
 
 ## 📂 Project Structure
-
+```text
+spenda-financial-infrastructure/
+│
+├── terraform/          # IaC modules for Lambda, DynamoDB, Cognito, and IAM
+├── api-docs/           # OpenAPI/Swagger specifications for 12 REST resources
+├── src/                # Modular Lambda function handlers (Non-proprietary)
+├── assets/             # Architectural diagrams and system workflows
+└── README.md           # Technical overview
 ```
-advanced-expense-tracker/
-│
-├── assets/
-│   ├── api-gateway-authorizer.png
-│   ├── cognito-user-pool.png
-│   ├── dynamodb-table.png
-│   ├── lambda-iam-policy.png
-│   └── tracker-dashboard-sample.png
-│
-├── backend/
-│ ├── AddExpenseFunction.py # Lambda to add a new expense and save to S3
-│ ├── GetExpenseFunction.py # Lambda to retrieve expenses from DynamoDB
-│ └── ExportExpenseFunction.py # Lambda to export expenses as CSV
-│
-├── frontend/
-│ ├── login.html # Login / Sign-Up page using Cognito
-│ └── tracker.html # Dashboard page to add/view expenses
-│
-├── infrastructure/
-│ └── ExpenseTracker_API-prod-oas30.yaml # Exported API Gateway OpenAPI YAML
-│
-└── README.md # Project overview and instructions
-
-```
-
----
-
-## ☁️ Infrastructure
-
-- The `infrastructure/ExpenseTracker_API-prod-oas30.yaml` file contains the exported OpenAPI (YAML) configuration for API Gateway. Import this into any AWS account/region to recreate the same endpoints.  
-- Amazon Cognito User Pool and App Client handle sign-up, sign-in, and JWT issuance.  
-- An S3 bucket (e.g., `user-expense-tracker-data`) stores JSON expense files and uploaded receipt images.  
-- CloudFront distribution serves static frontend assets from S3 with HTTPS and caching.
-
----
-
-## 🚀 How to Run & Deploy
-
-### 🖥️ Local Testing
-
-1. Open `frontend/login.html` in a modern browser.  
-2. Sign up or sign in using an existing Cognito user.  
-3. Upon successful login, you will be redirected to `tracker.html`.  
-4. On `tracker.html`, enter **User ID**, **Amount**, **Category**, and **Description**, then click **Add Expense**.  
-5. Click **View My Expenses** to fetch all items for the provided user ID.
-
-> **Note:** For local testing without AWS resources, some buttons will not work. You can still confirm UI layout and form validation.
-
----
-
-### 🛠️ Deploy Backend
-
-### 1. Create DynamoDB Table
-
-* Table name: `Expenses`
-* Partition key: `userId` (String)
-* Sort key: `timestamp` (String)
-
-### 2. Deploy Lambda Functions
-
-* Create `AddExpenseFunction` (Python 3.x) to handle POST requests
-* Create `GetExpenseFunction` (Python 3.x) to handle GET requests
-* Create `ExportExpenseFunction` (Python 3.x) to export expense data to S3
-* All function code is located in the `backend/` folder
-
-### 3. IAM Role
-
-* Create a role named `Full_DynamoDB_S3_Access`
-* Attach managed policies: `AmazonDynamoDBFullAccess`, `AWSLambdaBasicExecutionRole` and `AmazonS3FullAccess`
-* ⚠️ Note: This approach does not follow least privilege but simplifies setup for demo purposes
-
-### 4. Set Up Amazon Cognito
-
-* Create a User Pool and configure required attributes (e.g., email)
-* Create an App Client (no client secret) and note the User Pool ID and App Client ID
-* In Lambda functions, extract `userId` from the JWT token provided by Cognito
-* 
-### 5. Configure API Gateway
-
-* Create a new REST API
-* Import the OpenAPI spec from `infrastructure/ExpenseTracker_API-prod-oas30.yaml`
-* Enable CORS for `POST /expenses`, `GET /expenses`, and `GET /export-expenses`
-* Set Authorization to use Cognito User Pool Authorizer with Token Source: `Authorization`
-* Configure stage-level throttling (e.g., 100 RPS, 200 burst)
-* Deploy the API to a stage (e.g., `prod`) and note the Invoke URL
-
-### 6. Create S3 Buckets
-
-* Create `user-expense-tracker-data` for storing JSON expense data; no public access
-* Grant permissions for Lambda to put objects and QuickSight to read objects
-* Create `user-expense-tracker-frontend` for hosting static files (`login.html` and `tracker.html`); enable public read access
-* (Optional) Enable versioning on `user-expense-tracker-frontend` to retain previous HTML versions
-
-### 7. Set Up CloudFront
-
-* Create a CloudFront distribution pointing to the `user-expense-tracker-frontend` S3 bucket
-* Use the static website hosting endpoint or an Origin Access Identity (OAI)
-* Configure HTTP to redirect to HTTPS
-* Allow public access (no WAF)
-* Restrict geo-location to North America and Europe to stay within the free tier
-
-### 8. Configure QuickSight (Optional)
-
-* Create a new QuickSight dataset using S3 as the source
-* Point to the `user-expense-tracker-data` bucket or a specific prefix
-* Build dashboards to visualize spending trends, category breakdowns, and exports
-
----
-
-## 💡 Host Frontend
-
-1. Upload `login.html` and `tracker.html` to your S3 bucket under a folder (e.g., `public/`).  
-2. If using CloudFront, set the bucket’s **static website hosting** or configure an Origin Path to serve these HTML files.  
-3. Ensure CORS settings on S3 allow your API’s domain to be called from these pages.  
-4. Update the JavaScript in both HTML files to point `fetch` calls to your API Gateway Invoke URL.  
-
----
-
-### 🧪 Local UI Preview
-
-Here’s a snapshot of the Tracker Dashboard when viewing expenses:
-
-![Tracker Dashboard Screenshot](assets/tracker-dashboard-sample.png)
-
 ---
 
 ## 📬 Contact
 
-Ope – Aspiring Cloud Support Specialist  
+Ope Oshinyemi – Cloud & Financial Systems Engineer
 [LinkedIn](https://linkedin.com/in/oshinyemio) | [oshinyemio@gmail.com](mailto:oshinyemio@gmail.com)
 
 ---
