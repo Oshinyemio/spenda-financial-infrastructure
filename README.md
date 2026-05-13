@@ -188,13 +188,13 @@ spenda-financial-infrastructure/
 ## 📸 Dashboard Preview
 
 **Main Dashboard** — Real-time account aggregation and spending overview
-![Spenda Dashboard](./assets/spenda-dashboard.png)
+![Spenda Dashboard](./assets/dashboard-preview.png)
 
 **Cash Flow Analytics** — Monthly income vs. expenses with trend analysis
-![Cash Flow Dashboard](./assets/spenda-dashboard-cashflow.png)
+![Cash Flow Dashboard](./assets/dashboard-preview-cashflow.png)
 
 **Monthly Breakdown** — Category-wise spending visualization and budget progress
-![Monthly Breakdown](./assets/spenda-mothly.png)
+![Monthly Breakdown](./assets/dashboard-preview-monthly.png)
 
 ---
 
