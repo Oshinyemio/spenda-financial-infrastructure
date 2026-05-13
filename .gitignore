@@ -1,11 +1,16 @@
-# Local terraform state
+# Terraform internal files
 .terraform/
 *.tfstate
 *.tfstate.backup
+.terraform.lock.hcl
 
-# SECRETS - DO NOT REMOVE
-terraform.tfvars
-*.tfvars
-
-# Build artifacts
+# Local builds & zips
 build/
+**/*.zip
+
+# Secrets
+*.tfvars
+.env
+
+# System files
+.DS_Store
