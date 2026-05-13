@@ -1,0 +1,991 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Page background */
+    --color-bg-page: 255 255 255;
+    /* white */
+
+    /* Surface (cards, panels, sections) */
+    --color-surface: 249 250 251;
+    /* gray-50 */
+
+    /* Borders */
+    --color-border-subtle: 243 244 246;
+    /* gray-100 */
+    --color-border-main: 229 231 235;
+    /* gray-200 */
+
+    /* Text */
+    --color-text-main: 17 24 39;
+    /* gray-900 */
+    --color-text-muted: 107 114 128;
+    /* gray-500 */
+    --color-text-soft: 156 163 175;
+    /* gray-400 */
+
+    /* Header */
+    --color-header-from: 255 255 255;
+    /* white */
+    --color-header-to: 249 250 251;
+    /* gray-50 */
+  }
+
+  .dark {
+    --color-bg-page: 18 16 15;
+    /* #12100f — very deep warm black */
+    --color-border-main: 30 28 27;
+    /* #1e1c1b — slightly lighter warm charcoal */
+    --color-surface: 32 32 32;
+    /* slate-800 */
+    --color-border-subtle: 18 16 15;
+    /* slate-700 */
+    --color-text-main: 241 245 249;
+    /* slate-100 */
+    --color-text-muted: 148 163 184;
+    /* slate-400 */
+    --color-text-soft: 100 116 139;
+    /* slate-500 */
+    --color-header-from: 18 16 15;
+    /* slate-900 */
+    --color-header-to: 18 16 15;
+    /* slate-800 */
+  }
+}
+
+/* ===== Custom Utilities ===== */
+@layer utilities {
+
+  .overflow-x-auto::-webkit-scrollbar {
+    display: none;
+  }
+
+  .overflow-x-auto {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .overflow-y-auto {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  /* Ensure date display text truncates if it overflows */
+  /* Example fixed width, smaller than before */
+  .dateDisplay {
+    width: 80px;
+    /* or adjust as needed */
+    min-width: 80px;
+    max-width: 80px;
+    text-align: center;
+    cursor: pointer;
+    /* restore pointer */
+  }
+
+  /* --- Grid & Layout --- */
+  .ledger-grid {
+    grid-template-columns: 90px 1fr 1fr 1fr;
+  }
+
+  .icon-only .flex {
+    justify-content: center !important;
+  }
+
+  .icon-only span,
+  .icon-only .fas {
+    display: none !important;
+  }
+
+  .chart-scroll-container::-webkit-scrollbar {
+    height: 6px;
+  }
+
+  .chart-scroll-container::-webkit-scrollbar-thumb {
+    background: rgba(156, 163, 175, 0.5);
+    /* gray-400 */
+    border-radius: 10px;
+  }
+
+  .bg-gold {
+    background-color: #f7c640;
+  }
+
+  .text-gold {
+    color: #f7c640;
+  }
+
+  .shrink-for-buttons {
+    padding-right: 7rem !important;
+  }
+
+  /* --- Toast Messages --- */
+  .toast-container {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9999;
+    pointer-events: none;
+  }
+
+  .toast {
+    background: #1f2937;
+    color: white;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 14px;
+    margin-top: 8px;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.25s ease, transform 0.25s ease;
+  }
+
+  .toast.show {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .toast.warning {
+    background: #7A42F4;
+  }
+
+  .toast.error {
+    background: #b91c1c;
+  }
+
+  .toast.success {
+    background: #15803d;
+  }
+
+  /* --- Expense Icon & Badge --- */
+  .expense-icon-badge,
+  .expense-icon-badge-glow {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .expense-icon-badge-glow {
+    top: 0;
+    left: 0;
+  }
+
+  .expense-icon-glow {
+    width: 1.25rem;
+    height: 1.25rem;
+    color: white;
+  }
+
+  .expense-icon-container:hover .expense-icon-badge {
+    opacity: 0;
+  }
+
+  .expense-icon-container:hover .expense-icon-badge-glow {
+    opacity: 1;
+  }
+
+  /* --- Animations --- */
+  .jiggle {
+    animation: jiggle 0.4s ease;
+  }
+
+  .glow-animation {
+    animation: glow 2s infinite ease-in-out;
+  }
+
+  .glow-background.bounce-animation {
+    animation: bounce-custom 1.5s infinite ease-in-out;
+  }
+
+  .animate-breathe {
+    animation: breathe 1.8s ease-in-out infinite;
+  }
+
+  .bar-loading-line {
+    height: 100%;
+    background: linear-gradient(90deg, #d1d5db 0%, #7A42F4 50%, #d1d5db 100%);
+    width: 50%;
+    animation: loading-line 1.2s infinite;
+  }
+
+  @keyframes jiggle {
+    0% {
+      transform: translateX(0);
+    }
+
+    25% {
+      transform: translateX(-2px);
+    }
+
+    50% {
+      transform: translateX(2px);
+    }
+
+    75% {
+      transform: translateX(-1px);
+    }
+
+    100% {
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes glow {
+
+    0%,
+    100% {
+      box-shadow: 0 0 5px 2px #fdba0070;
+    }
+
+    50% {
+      box-shadow: 0 0 15px 6px #fdba0070;
+    }
+  }
+
+  @keyframes bounce-custom {
+
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+
+    50% {
+      transform: translateY(-5px);
+    }
+  }
+
+  @keyframes loading-slide {
+    0% {
+      transform: translateX(-40%);
+    }
+
+    100% {
+      transform: translateX(340%);
+    }
+  }
+
+  @keyframes breathe {
+
+    0%,
+    100% {
+      opacity: 0.6;
+      transform: scale(0.98);
+    }
+
+    50% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @keyframes loading-line {
+    0% {
+      transform: translateX(-100%);
+    }
+
+    50% {
+      transform: translateX(50%);
+    }
+
+    100% {
+      transform: translateX(100%);
+    }
+  }
+
+  /* --- Autofill Detection --- */
+  @keyframes onAutoFillStart {
+    from {}
+
+    to {}
+  }
+
+  input:-webkit-autofill {
+    animation-name: onAutoFillStart;
+    animation-duration: 0.1s;
+  }
+
+  /* --- Topnav Active Link --- */
+  .topnav-link.text-primary-accent.relative::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: -2px;
+    width: 60%;
+    height: 2px;
+    border-radius: 9999px;
+    background: currentColor;
+    transform: translateX(-50%);
+  }
+
+}
+
+/* ===== Component Utilities ===== */
+@layer components {
+
+  .mode-btn {
+    @apply flex items-center justify-center w-9 h-9 sm:w-12 sm:h-12 rounded-xl text-xs-sm font-medium;
+  }
+
+  /* --- Responsive Text Sizes --- */
+  .text-sm-base {
+    @apply text-sm sm:text-base;
+  }
+
+  .text-base-lg {
+    @apply text-base sm:text-lg;
+  }
+
+  .text-lg-xl {
+    @apply text-lg sm:text-xl;
+  }
+
+  .text-xl-2xl {
+    @apply text-xl sm:text-2xl;
+  }
+
+  .text-2xl-3xl {
+    @apply text-2xl sm:text-3xl;
+  }
+
+  .text-xs-sm {
+    @apply text-xs sm:text-sm;
+  }
+
+  .text-base-xl {
+    @apply text-base sm:text-xl;
+  }
+
+  /* --- Responsive Icon Sizes --- */
+  .icon-sm-base {
+    @apply w-4 h-4 sm:w-5 sm:h-5;
+  }
+
+  .icon-base-lg {
+    @apply w-5 h-5 sm:w-6 sm:h-6;
+  }
+
+  .icon-lg-xl {
+    @apply w-6 h-6 sm:w-7 sm:h-7;
+  }
+
+  .icon-xl-2xl {
+    @apply w-7 h-7 sm:w-8 sm:h-8;
+  }
+
+  /* --- Filter & Transaction Buttons --- */
+  .expense-type-filter-btn,
+  .date-filter-btn {
+    @apply px-3 py-2 rounded-full border border-200 bg-surface/90 text-sm text-center text-dark-light font-medium shadow-md cursor-pointer hover:shadow-lg transition-all duration-200;
+  }
+
+  .expense-type-filter-btn.active {
+    @apply bg-primary-accent/10 border-primary-accent text-primary-accent dark:text-gray-300 font-semibold;
+  }
+
+  .transaction-type-btn {
+    @apply flex-1 h-10 rounded-full border border-200 text-sm font-medium text-global-gray bg-surface/90 text-center hover-gray-100 transition;
+  }
+
+  .transaction-type-btn.active {
+    @apply bg-primary-accent/10 border-primary-accent text-primary-accent dark:text-gray-300 font-semibold;
+  }
+
+  /* --- Modal Layouts --- */
+  .modal-section {
+    @apply space-y-4 px-4 sm:px-8 py-4 sm:py-6;
+  }
+
+  .modal-section-md {
+    @apply space-y-4 sm:space-y-6 px-4 sm:px-6 py-4 sm:py-6;
+  }
+
+  .modal-overlay {
+    @apply hidden fixed inset-0 z-30 flex justify-center items-start overflow-y-auto px-4 py-12 sm:py-24;
+  }
+
+  .modal-overlay-nested {
+    @apply hidden fixed inset-0 z-40 flex justify-center bg-black/40 items-start overflow-y-auto px-4 py-20 sm:py-36;
+  }
+
+  .modal-card-base {
+    @apply relative bg-surface rounded-3xl shadow-lg border border-100;
+  }
+
+  .modal-card {
+    @apply modal-card-base w-full max-w-modalWidth;
+  }
+
+  .modal-card-md {
+    @apply modal-card-base w-full max-w-md;
+  }
+
+  .modal-card-calendar {
+    @apply modal-card-md p-6;
+  }
+
+  .calendar-section {
+    @apply bg-gray-100 dark:bg-gray-400/20 p-3 rounded-lg;
+  }
+
+  .calendar-day-grid {
+    @apply grid grid-cols-7 gap-2 text-center text-sm-base font-medium text-global-gray;
+  }
+
+  .calendar-weekdays {
+    @apply grid grid-cols-7 gap-2 text-center text-xs-sm font-semibold text-light-gray mb-2;
+  }
+
+  .calendar-footer-center {
+    @apply flex justify-center gap-6 px-4;
+  }
+
+  .calendar-footer-split {
+    @apply flex gap-4;
+  }
+
+  .calendar-footer {
+    @apply mt-3;
+  }
+
+  .modal-header {
+    @apply relative flex items-center justify-between px-6 py-2 sm:py-4 border-b border-200;
+  }
+
+  .modal-title {
+    @apply font-heading font-semibold text-global-gray text-lg sm:text-2xl;
+  }
+
+  .modal-header-centered {
+    @apply relative flex items-center justify-center px-4 py-3 sm:py-4 border-b border-200;
+  }
+
+  .modal-title-centered {
+    @apply font-heading font-medium text-global-gray text-lg-xl text-center;
+  }
+
+  .modal-close-absolute {
+    @apply absolute right-4 text-gray-400 hover:text-gray-600 dark:hover:text-hover-dark text-2xl;
+  }
+
+  /* ===== Action Button Stack ===== */
+  .action-stack {
+    @apply flex flex-col gap-2 sm:gap-3;
+  }
+
+  /* --- Selector Buttons --- */
+  .selector-btn {
+    @apply w-full flex items-center justify-between px-4 py-3 bg-surface/90 sm:py-3 rounded-2xl border border-200 shadow-sm hover:shadow-md dark:shadow-lg transition;
+  }
+
+  .selector-btn-content {
+    @apply flex items-center gap-2;
+  }
+
+  .selector-btn-label {
+    @apply text-sm sm:text-base font-semibold text-light-gray truncate;
+  }
+
+  .selector-btn-icon {
+    @apply text-light-gray;
+  }
+
+  .selector-btn-chevron {
+    @apply w-5 h-5 text-primary-accent dark:text-primary-accent-light;
+  }
+
+  /* --- Transitions --- */
+  .expense-transition {
+    @apply transition-all duration-500;
+    transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  /* --- Segment Buttons --- */
+  .segment-btn {
+    @apply flex-1 text-sm sm:text-lg font-medium text-global-gray bg-surface/90 px-4 transition;
+  }
+
+  .segment-btn:hover {
+    @apply bg-secondary-accent text-surface/90;
+  }
+
+  .segment-wrapper {
+    @apply inline-flex w-full h-10 sm:h-12 bg-gray-100-900 rounded-full overflow-hidden border border-secondary-accent;
+  }
+
+  /* --- Review Row --- */
+  .review-row {
+    @apply flex justify-between items-center text-sm sm:text-base;
+  }
+
+  .review-label {
+    @apply font-semibold text-icon-gray;
+  }
+
+  .review-value {
+    @apply text-global-gray text-right;
+  }
+
+  .review-divider {
+    @apply border-t border-200 my-2;
+  }
+
+  .review-amount {
+    @apply text-base sm:text-lg font-heading font-semibold text-primary-gray text-right;
+  }
+
+  .review-textarea {
+    @apply w-full rounded-xl bg-transparent border border-200 p-4 text-global-gray text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-primary-accent;
+  }
+
+  /* --- Step Status --- */
+  .step-status {
+    @apply text-center text-xs sm:text-sm font-medium mt-2;
+  }
+
+  .step-nav-btn {
+    @apply transition font-medium text-xs-sm px-2 sm:px-3 py-2 whitespace-nowrap border-b-2;
+  }
+
+  /* Active State */
+  .step-btn-active {
+    @apply text-primary-gray border-primary-accent font-semibold;
+  }
+
+  /* Unlocked / Completed State */
+  .step-btn-unlocked {
+    @apply text-global-gray border-transparent hover:text-primary-accent;
+  }
+
+  /* Disabled / Locked State */
+  .step-btn-disabled {
+    @apply text-gray-400 dark:text-gray-300/50 border-transparent cursor-not-allowed;
+  }
+
+  /* --- Segmented Groups --- */
+  .segmented-group {
+    @apply flex gap-2;
+  }
+
+  .segmented-btn {
+    @apply flex-1 py-2 px-3 rounded-xl bg-surface/90 border border-200 text-global-gray font-medium shadow-subtle transition-all duration-200 hover:shadow-md hover-gray-200;
+  }
+
+  .segmented-btn--sm {
+    @apply text-xs-sm;
+  }
+
+  .segmented-btn--base {
+    @apply text-sm-base;
+  }
+
+  .segmented-btn--active {
+    @apply bg-primary-accent text-spenda-white border-primary-accent/80;
+  }
+
+  /* Add to input.css under @layer components */
+  .mode-btn--active {
+    @apply bg-primary-dark text-white-gray shadow-md;
+    border-color: transparent;
+    /* Remove border when active to keep it clean */
+  }
+
+  /* ===== Modal Center Stack ===== */
+  .modal-center-stack {
+    @apply flex flex-col items-center space-y-4;
+  }
+
+  /* ===== Modal Status Icon ===== */
+  .modal-icon {
+    @apply w-8 h-8 sm:w-10 sm:h-10;
+  }
+
+  .modal-icon-header {
+    @apply w-7 h-7 sm:w-7 sm:h-7;
+  }
+
+  .modal-icon-circle {
+    @apply absolute left-6 flex items-center justify-center rounded-full w-9 h-9;
+  }
+
+  .modal-icon-danger {
+    @apply text-red-500;
+  }
+
+  .modal-icon-warning {
+    @apply text-amber-500;
+  }
+
+  .modal-icon-success {
+    @apply text-green-500;
+  }
+
+  .modal-icon-secondary {
+    @apply text-secondary-accent;
+  }
+
+  .modal-icon-info {
+    @apply text-blue-500;
+  }
+
+  .modal-icon-primary {
+    @apply text-primary-accent;
+  }
+
+  .modal-icon-blue {
+    @apply bg-blue-100/80 text-blue-500;
+  }
+
+  .modal-icon-green {
+    @apply bg-green-100 text-green-500;
+  }
+
+  .modal-icon-yellow {
+    @apply bg-yellow-100 text-yellow-500;
+  }
+
+  /* ===== Modal Message Card ===== */
+  .modal-message {
+    @apply p-4 rounded-lg w-full;
+  }
+
+  .modal-message-danger {
+    @apply bg-red-500/40 dark:bg-red-500/40;
+  }
+
+  .modal-message-warning {
+    @apply bg-amber-500/40 dark:bg-amber-500/40;
+  }
+
+  .modal-message-success {
+    @apply bg-secondary-accent-500/40 dark:bg-secondary-accent-500/40;
+  }
+
+  .modal-message-info {
+    @apply bg-blue-500/40 dark:bg-blue-500/40;
+  }
+
+  .modal-message-primary {
+    @apply bg-gray-100 dark:bg-primary-accent/40 border border-gray-200 dark:border-primary-accent;
+  }
+
+  /* ===== Modal Message Text ===== */
+  .modal-message-text {
+    @apply text-center text-sm-base font-medium text-global-gray leading-relaxed;
+  }
+
+  /* ===== Modal Subtext ===== */
+  .modal-message-subtext {
+    @apply block mt-1 text-xs-sm text-light-gray font-normal leading-snug;
+  }
+
+  /* ===== Full Width Buttons ===== */
+  .btn-full {
+    @apply w-full text-sm-base font-medium py-2 px-4 rounded-full transition-colors;
+  }
+
+  .btn-neutral {
+    @apply btn-base bg-gray-200 dark:bg-gray-400/20 text-global-gray hover:bg-gray-300 dark:hover:bg-hover-dark;
+  }
+
+  .btn-danger {
+    @apply btn-base bg-red-500 dark:bg-red-500/40 hover:bg-red-600 hover:dark:bg-red-500 text-global-gray;
+  }
+
+  .btn-primary {
+    @apply btn-base bg-primary-dark text-spenda-white hover:bg-primary-accent/85 dark:hover:bg-primary-accent;
+  }
+
+  .btn-white {
+    @apply btn-base bg-surface border border-200 text-global-gray hover-gray-200 font-medium shadow-big-btn transition;
+  }
+
+  .btn-warning {
+    @apply btn-base bg-amber-500 dark:bg-amber-500/40 hover:bg-amber-600 hover:dark:bg-amber-500/60 text-white-gray;
+  }
+
+  .btn-currency {
+    @apply btn-base bg-secondary-accent dark:bg-secondary-accent/40 hover:bg-secondary-accent/70 dark:hover:bg-secondary-accent/70 text-white-gray;
+  }
+
+  .btn-blue {
+    @apply btn-base bg-blue-600 dark:bg-blue-500/40 hover:bg-blue-600 hover:dark:bg-blue-500 text-white-gray;
+  }
+
+  .btn-yellow {
+    @apply btn-base bg-yellow-500 dark:bg-yellow-500/40 hover:bg-yellow-600 hover:dark:bg-yellow-500/70 text-global-gray;
+  }
+
+  /* --- Buttons Base & Variants --- */
+  .btn-base {
+    @apply justify-center items-center h-12 rounded-full text-sm-base font-semibold transition-colors duration-200;
+  }
+
+  .btn-primary-ring {
+    @apply btn-base bg-primary-dark text-spenda-white hover:bg-primary-accent/85 dark:hover:bg-primary-accent border border-primary-accent;
+  }
+
+  .btn-red {
+    @apply btn-base bg-red-600 text-gray-200 hover:bg-red-600/60 focus:ring-red-600;
+  }
+
+  .btn-gray {
+    @apply btn-base bg-gray-400 dark:bg-gray-600 text-white hover:bg-gray-500 dark:hover:bg-hover-dark;
+  }
+
+  /* ===== Date arrow Icon Button ===== */
+  .date-nav-btn {
+    @apply absolute top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center text-surface/90 hover:opacity-80;
+  }
+
+  /* --- Overlay Backdrop --- */
+  .overlay-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 20;
+    cursor: pointer;
+  }
+
+  .dark .overlay-backdrop {
+    background-color: rgba(0, 0, 0, 0.75);
+  }
+
+  .overlay-backdrop.show {
+    display: block;
+  }
+
+  /* --- Page Container --- */
+  .page-container {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: linear-gradient(to bottom right,
+        rgb(var(--color-bg-page)),
+        rgb(var(--color-border-main)));
+  }
+
+  .app-header {
+    background: linear-gradient(to bottom right,
+        rgb(var(--color-header-from)),
+        rgb(var(--color-header-to) / 0.4));
+  }
+
+  .bg-100-dark {
+    @apply bg-gray-100 dark:bg-gray-400/10;
+  }
+
+  .bg-200-dark {
+    @apply bg-gray-200 dark:bg-gray-400/20;
+  }
+
+  .bg-400-dark {
+    @apply bg-gray-400 dark:bg-gray-400/20;
+  }
+
+  .bg-gray-100-900 {
+    @apply bg-gray-100 dark:bg-gray-900;
+  }
+
+  .bg-primary-secondary {
+    @apply bg-primary-accent dark:bg-secondary-accent-dark/80;
+  }
+
+  .bg-secondary-primary {
+    @apply bg-secondary-accent dark:bg-primary-accent;
+  }
+
+  .bg-secondary-dark {
+    @apply bg-secondary-accent/10 dark:bg-secondary-accent-dark/80;
+  }
+
+  .bg-primary-dark {
+    @apply bg-primary-accent dark:bg-primary-accent-dark/80;
+  }
+
+  .border-100 {
+    @apply border-gray-100 dark:border-gray-400/20;
+  }
+
+  .border-200 {
+    @apply border-gray-200 dark:border-gray-400/20;
+  }
+
+  .border-300 {
+    @apply border-gray-300 dark:border-gray-400/50;
+  }
+
+  .border-primary-gray {
+    @apply border-primary-accent dark:border-gray-300/80;
+  }
+
+  /* Will replace all remaining text-gray-700-300 with this utility for consistency */
+  .text-global-gray {
+    @apply text-gray-700 dark:text-gray-300;
+  }
+
+  .text-icon-gray {
+    @apply text-gray-600 dark:text-gray-400;
+  }
+
+  .text-light-gray {
+    @apply text-gray-600 dark:text-gray-300;
+  }
+
+  .text-lighter-gray {
+    @apply text-gray-400 dark:text-gray-500;
+  }
+
+  .text-black-white {
+    @apply text-gray-900 dark:text-gray-100;
+  }
+
+  .text-dark-light {
+    @apply text-gray-800 dark:text-gray-200;
+  }
+
+  .text-white-gray {
+    @apply text-white dark:text-gray-300;
+  }
+
+  .text-primary-dark {
+    @apply text-primary-accent dark:text-primary-accent/80;
+  }
+
+  .text-primary-gray {
+    @apply text-primary-accent dark:text-gray-300;
+  }
+
+  .text-primary-secondary {
+    @apply text-primary-accent dark:text-secondary-accent;
+  }
+
+  .hover-text-primary-secondary {
+    @apply hover:text-primary-accent dark:hover:text-secondary-accent-dark;
+  }
+
+  .hover-lighter-gray {
+    @apply hover:text-gray-700 dark:hover:text-gray-300;
+  }
+
+  .hover-text-gray-800 {
+    @apply hover:text-gray-800 dark:hover:text-gray-300;
+  }
+
+  .hover-gray-200 {
+    @apply hover:bg-gray-200 dark:hover:bg-hover-dark;
+  }
+
+  .hover-primary-header {
+    @apply hover:text-primary-accent dark:hover:text-spenda-white hover:font-semibold;
+  }
+
+  .hover-primary-dark {
+    @apply dark:font-extrabold dark:hover:text-primary-accent;
+  }
+
+  .hover-primary-gray {
+    @apply dark:font-extrabold dark:hover:text-primary-accent hover:font-extrabold hover:text-primary-accent/80 bg-primary-accent;
+  }
+
+  .hover-gray-100 {
+    @apply hover:bg-gray-100 dark:hover:bg-hover-dark;
+  }
+
+  .hover-gray-50 {
+    @apply hover:bg-gray-50 dark:hover:bg-hover-dark;
+  }
+
+  /* toggle-container.css */
+  .toggle-container {
+    @apply relative inline-grid grid-flow-col auto-cols-max gap-2 rounded-full p-1 shadow-subtle;
+  }
+
+  .toggle-indicator {
+    @apply absolute top-1 bottom-1 rounded-full shadow-md transition-transform duration-300 ease-out;
+  }
+
+  .toggle-btn {
+    @apply relative z-10 py-1 text-xs sm:text-sm font-semibold rounded-full;
+  }
+
+  .placeholder-gray {
+    @apply placeholder:text-gray-400 dark:placeholder:text-gray-500;
+  }
+
+
+  /* ===================
+  INPUT
+  =====================*/
+
+  .input-config {
+    @apply flex items-center border border-200 rounded-xl p-3 text-base font-medium transition;
+  }
+
+  .input-config:hover {
+    @apply ring-1 ring-primary-accent-light dark:ring-primary-accent;
+  }
+
+  .input-config:focus-within {
+    @apply ring-2 ring-primary-accent-light dark:ring-primary-accent;
+  }
+
+  .input-field {
+    @apply flex-1 bg-transparent outline-none text-global-gray placeholder-gray placeholder:font-semibold placeholder:text-sm-base;
+  }
+
+  .input-icon {
+    @apply w-5 h-5 text-gray-400 mr-2 flex-shrink-0;
+  }
+
+  /*Shadow Utilities*/
+  .shadow-big-btn {
+    @apply shadow-subtle hover:shadow-md dark:hover:shadow-lg;
+  }
+
+  /* ===================
+  PASSWORD REQUIREMENTS
+  =====================*/
+
+  .password-requirements {
+    @apply text-sm-base text-lighter-gray font-medium space-y-1;
+  }
+
+  .requirement-item {
+    @apply flex items-center gap-2;
+  }
+
+  .req-dot {
+    @apply w-3 h-3 border border-gray-400 rounded-full flex-shrink-0 transition-all;
+  }
+
+  /* Optional states you can toggle via JS */
+  .requirement-item.valid .req-dot {
+    @apply bg-green-500 border-green-500;
+  }
+
+  .requirement-item.invalid .req-dot {
+    @apply bg-transparent border-gray-400;
+  }
+
+  /* Ensure the bar only rounds the 'leading' edge */
+  .category-bar {
+    border-radius: 0;
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+    /* Optional: a subtle shadow can make the 100% opaque border 'pop' more */
+    box-shadow: 1px 0 4px 0 rgba(0, 0, 0, 0.1);
+  }
+
+  .divide-100 {
+    @apply divide-gray-100 dark:divide-gray-400/20;
+  }
+
+  .divide-200 {
+    @apply divide-gray-200 dark:divide-gray-400/20;
+  }
+
+}

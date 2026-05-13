@@ -1,8 +1,8 @@
-# Terraform internal files
+# Terraform internals
+**/.terraform/
 .terraform/
-*.tfstate
-*.tfstate.backup
-.terraform.lock.hcl
+**/*.tfstate*
+**/.terraform.lock.hcl
 
 # Local builds & zips
 build/
@@ -11,6 +11,16 @@ build/
 # Secrets
 *.tfvars
 .env
+
+# Frontend / Node
+**/node_modules/
+**/dist/
+**/.cache/
+**/build/
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
 
 # System files
 .DS_Store
