@@ -1,0 +1,11 @@
+# Local terraform state
+.terraform/
+*.tfstate
+*.tfstate.backup
+
+# SECRETS - DO NOT REMOVE
+terraform.tfvars
+*.tfvars
+
+# Build artifacts
+build/
