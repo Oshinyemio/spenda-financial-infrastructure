@@ -194,7 +194,7 @@ spenda-financial-infrastructure/
 ![Cash Flow Dashboard](./assets/dashboard-preview-cashflow.png)
 
 **Monthly Breakdown** — Category-wise spending visualization and budget progress
-![Monthly Breakdown](./assets/dashboard-preview-monthly.png)
+![Monthly Breakdown](./assets/dashboard-preview-monthly-tracking.png)
 
 ---
 
