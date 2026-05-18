@@ -58,6 +58,14 @@
 /* ===== Custom Utilities ===== */
 @layer utilities {
 
+  .bulk-icon-hidden .expense-icon-badge,
+  .bulk-icon-hidden .expense-icon-badge-glow {
+    opacity: 0;
+    pointer-events: none;
+    visibility: hidden;
+    /* add this — removes from hit-testing entirely */
+  }
+
   .overflow-x-auto::-webkit-scrollbar {
     display: none;
   }
@@ -324,6 +332,58 @@
 
 /* ===== Component Utilities ===== */
 @layer components {
+
+  /* Bulk select custom checkbox */
+  .bulk-select-checkbox {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 6px;
+    border: 2px solid rgb(229 231 235);
+    background: rgb(249 250 251);
+    cursor: pointer;
+    position: relative;
+    transition: background 0.15s, border-color 0.15s, transform 0.1s;
+    flex-shrink: 0;
+    display: block;
+  }
+
+  .dark .bulk-select-checkbox {
+    border-color: rgba(156, 163, 175, 0.2);
+    background: rgb(32 32 32);
+  }
+
+  .bulk-select-checkbox:checked {
+    background: #7A42F4;
+    border-color: #7A42F4;
+  }
+
+  .bulk-select-checkbox:checked::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 5px;
+    height: 9px;
+    border: 2px solid white;
+    border-top: none;
+    border-left: none;
+    transform: translate(-50%, -60%) rotate(45deg);
+  }
+
+  .bulk-select-checkbox:active {
+    transform: scale(0.9);
+  }
+
+  .expense-card.bulk-selected {
+    background: rgba(122, 66, 244, 0.06);
+    border-left: 3px solid #7A42F4 !important;
+  }
+
+  .dark .expense-card.bulk-selected {
+    background: rgba(122, 66, 244, 0.12);
+  }
 
   .mode-btn {
     @apply flex items-center justify-center w-9 h-9 sm:w-12 sm:h-12 rounded-xl text-xs-sm font-medium;
@@ -691,7 +751,7 @@
   }
 
   .btn-danger {
-    @apply btn-base bg-red-500 dark:bg-red-500/40 hover:bg-red-600 hover:dark:bg-red-500 text-global-gray;
+    @apply btn-base bg-red-500 dark:bg-red-500/40 text-spenda-white hover:bg-red-600 hover:dark:bg-red-500 text-global-gray;
   }
 
   .btn-primary {
