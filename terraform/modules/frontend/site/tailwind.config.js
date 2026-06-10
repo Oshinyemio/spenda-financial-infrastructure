@@ -56,16 +56,16 @@ module.exports = {
         // -----------------------------
         // Finance semantic colors (ADD THESE)
         // -----------------------------
-        "finance-savings": "#6bcfff",
-        "finance-investments": "#3b82f6",
+        "finance-savings": "#2DE1C2",
+        "finance-investments": "#007c68",
 
-        "finance-credit": "#f59e0b",
-        "finance-loc": "#e8ad0a",
-        "finance-loan": "#E8650A",
+        "finance-credit": "#FFCF96",
+        "finance-loc": "#FFCF96",
+        "finance-loan": "#f6814b",
 
-        "wants": "#f59e0b",
-        "flexible-needs": "#e8ad0a",
-        "fixed-needs": "#E8650A",
+        "fixed-needs": "#FF9E7D",
+        "flexible-needs": "#6bcfff",
+        "wants": "#E0AAFF",
 
         "loan-color": "#ADE8F4",
         "cc-color": "#00B4D8",
@@ -81,7 +81,8 @@ module.exports = {
       },
       fontFamily: {
         body: ["Quicksand", "sans-serif"],
-        heading: ["Manrope", "sans-serif"],   // or whatever you're testing
+        heading: ["Poppins", "sans-serif"],   // or whatever you're testing
+        number: ["Poppins", "monospace"],
         logo: ["Poppins", "sans-serif"],
         mono: ["IBM Plex Mono", "monospace"],
       },
