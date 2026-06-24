@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <script>
+    const saved = localStorage.getItem('theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    if (saved === 'dark' || (!saved && prefersDark)) document.documentElement.classList.add('dark');
+  </script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Spenda – impact point</title>
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;900&family=Quicksand:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary-accent": "#7A42F4",
+            "primary-accent-dark": "#5A2EB2",
+            "secondary-accent": "#00D1B2",
+            "error-soft-red": "#F56565",
+            "warning-soft-yellow": "#ECC94B",
+            "success-soft-green": "#00D1B2",
+            'surface': 'rgb(var(--color-surface) / <alpha-value>)',
+          },
+          fontFamily: { body: ["Quicksand", "sans-serif"], heading: ["Poppins", "sans-serif"] },
+          boxShadow: { subtle: "0 4px 6px rgba(0,0,0,0.05), 0 1px 3px rgba(0,0,0,0.03)" },
+        },
+      },
+    };
+  </script>
+  <style>
+    :root { --color-bg-page: 255 255 255; --color-surface: 249 250 251; --color-border-main: 229 231 235; }
+    .dark { --color-bg-page: 18 16 15; --color-surface: 32 32 32; --color-border-main: 30 28 27; }
+    body { font-family: Quicksand, sans-serif; min-height: 100vh;
+      background: linear-gradient(to bottom right, rgb(var(--color-bg-page)), rgb(var(--color-border-main))); }
+    .font-heading { font-family: Poppins, sans-serif; }
+    .amount { font-variant-numeric: tabular-nums; }
+    .barfill { transition: width .6s cubic-bezier(.16,1,.3,1), background-color .3s ease; }
+  </style>
+</head>
+
+<body class="text-gray-800 dark:text-gray-200 p-6 sm:p-10">
+
+  <div class="max-w-2xl mx-auto space-y-6">
+
+    <div class="flex items-center justify-between">
+      <p class="text-xs font-semibold uppercase tracking-wider text-gray-400">Impact point · spending</p>
+      <button id="themeToggle" class="flex items-center gap-2 text-sm font-semibold text-gray-500 dark:text-gray-300 px-3 py-1.5 rounded-full border border-gray-200 dark:border-gray-400/20">
+        <i data-lucide="moon" class="w-4 h-4 dark:hidden"></i>
+        <i data-lucide="sun" class="w-4 h-4 hidden dark:block"></i>
+        <span class="dark:hidden">Dark</span><span class="hidden dark:inline">Light</span>
+      </button>
+    </div>
+
+    <!-- ============ THE IMPACT POINT (this is the block to drop into home.html) ============ -->
+    <section class="bg-surface border border-gray-100 dark:border-gray-400/20 rounded-3xl shadow-subtle p-6 sm:p-8">
+      <div class="flex flex-col items-center sm:items-start text-center sm:text-left">
+
+        <!-- eyebrow -->
+        <p id="title" class="text-xs sm:text-sm font-semibold tracking-wider uppercase text-gray-500 dark:text-gray-400">
+          You've spent
+        </p>
+
+        <!-- hero dollar + budget context -->
+        <div class="flex items-end gap-3 mt-1">
+          <p id="spent" class="font-heading font-bold text-5xl sm:text-6xl text-gray-900 dark:text-gray-50 amount leading-none">
+            $2,460
+          </p>
+          <button id="action" class="mb-1 text-gray-400 hover:text-primary-accent transition" title="View overview" aria-label="View overview">
+            <i data-lucide="circle-chevron-right" class="w-6 h-6"></i>
+          </button>
+        </div>
+        <p class="mt-2 text-sm sm:text-base font-medium text-gray-400 dark:text-gray-500">
+          of <span id="budget" class="amount">$3,000</span> budgeted
+        </p>
+
+        <!-- progress bar -->
+        <div class="w-full max-w-md mt-5">
+          <div class="h-3 w-full rounded-full bg-gray-200 dark:bg-white/10 overflow-hidden">
+            <div id="bar" class="barfill h-full rounded-full" style="width:82%;background:#ECC94B"></div>
+          </div>
+
+          <!-- status row -->
+          <div class="flex items-center justify-between mt-2.5">
+            <span id="remaining" class="text-sm font-semibold text-yellow-600 dark:text-warning-soft-yellow amount">
+              $540 left
+            </span>
+            <span class="text-sm font-medium text-gray-400 dark:text-gray-500">
+              <span id="pct" class="amount font-semibold text-gray-600 dark:text-gray-300">82.0%</span> used
+            </span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ============ demo control (NOT part of the component) ============ -->
+    <div class="bg-surface/60 border border-dashed border-gray-300 dark:border-gray-400/30 rounded-2xl p-4">
+      <label class="text-xs font-semibold uppercase tracking-wider text-gray-400">Demo — drag to change spend (budget fixed at $3,000)</label>
+      <input id="slider" type="range" min="0" max="3900" value="2460" step="20" class="w-full mt-3 accent-primary-accent">
+      <div class="flex justify-between text-xs text-gray-400 mt-1">
+        <span>healthy</span><span>getting close</span><span>over budget</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const BUDGET = 3000;
+    const fmt = n => '$' + Math.round(n).toLocaleString('en-US');
+
+    // mirror home.js thresholds: <70 green, 70-90 yellow, >=90 red
+    function status(pct) {
+      if (pct < 70) return { bar: '#00D1B2', remain: 'text-secondary-accent', pctC: 'text-gray-600 dark:text-gray-300' };
+      if (pct < 90) return { bar: '#ECC94B', remain: 'text-yellow-600 dark:text-warning-soft-yellow', pctC: 'text-gray-600 dark:text-gray-300' };
+      return { bar: '#F56565', remain: 'text-error-soft-red', pctC: 'text-error-soft-red' };
+    }
+
+    function render(spent) {
+      const pct = (spent / BUDGET) * 100;
+      const s = status(pct);
+      document.getElementById('spent').textContent = fmt(spent);
+      document.getElementById('budget').textContent = fmt(BUDGET);
+      document.getElementById('pct').textContent = pct.toFixed(1) + '%';
+      document.getElementById('pct').className = 'amount font-semibold ' + s.pctC;
+
+      const bar = document.getElementById('bar');
+      bar.style.width = Math.min(pct, 100) + '%';
+      bar.style.background = s.bar;
+
+      const rem = document.getElementById('remaining');
+      const left = BUDGET - spent;
+      rem.className = 'text-sm font-semibold amount ' + s.remain;
+      rem.textContent = left >= 0 ? fmt(left) + ' left' : 'Over by ' + fmt(-left);
+    }
+
+    document.getElementById('slider').addEventListener('input', e => render(+e.target.value));
+    document.getElementById('themeToggle').addEventListener('click', () => {
+      document.documentElement.classList.toggle('dark');
+      localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+      render(+document.getElementById('slider').value);
+    });
+
+    render(2460);
+    lucide.createIcons();
+  </script>
+</body>
+
+</html>

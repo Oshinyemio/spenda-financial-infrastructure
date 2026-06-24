@@ -80,9 +80,9 @@ module.exports = {
         'text-soft': 'rgb(var(--color-text-soft) / <alpha-value>)',
       },
       fontFamily: {
-        body: ["Quicksand", "sans-serif"],
+        body: ["Manrope", "sans-serif"],
         heading: ["Poppins", "sans-serif"],   // or whatever you're testing
-        number: ["Poppins", "monospace"],
+        number: ["Manrope", "monospace"],
         logo: ["Poppins", "sans-serif"],
         mono: ["IBM Plex Mono", "monospace"],
       },
@@ -108,6 +108,8 @@ module.exports = {
       fontSize: {
         hero2: ["clamp(2.6rem, 5vw, 4rem)", { lineHeight: "0", fontWeight: "600" }],
         hero: "clamp(2.6rem, 5vw, 4rem)",
+        budget: ["clamp(2.6rem, 5vw, 3.2rem)", { lineHeight: "1", fontWeight: "900" }],
+        budgets: ["clamp(2.6rem, 5vw, 3.5rem)", { lineHeight: "1", fontWeight: "900" }],
         "3.5xl": "2rem",
       },
       zIndex: {
@@ -137,6 +139,22 @@ module.exports = {
       addBase({
         body: {
           fontFamily: theme("fontFamily.body"),
+        },
+      });
+    },
+    function ({ addUtilities }) {
+      addUtilities({
+        '.text-ultra': {
+          '-webkit-text-stroke': '6px currentColor',
+          'paint-order': 'stroke fill',
+        },
+        '.font-semiultra': {
+          '-webkit-text-stroke': '0.06em currentColor',
+          'paint-order': 'stroke fill',
+        },
+        '.font-bolder': {
+          '-webkit-text-stroke': '0.03em currentColor',
+          'paint-order': 'stroke fill',
         },
       });
     },

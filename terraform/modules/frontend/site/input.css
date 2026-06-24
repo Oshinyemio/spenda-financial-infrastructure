@@ -66,6 +66,42 @@
     /* add this — removes from hit-testing entirely */
   }
 
+  /* Force visible scrollbar on the table container */
+  .table-scroll-container {
+    overflow-x: scroll;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: transparent transparent;
+    /* Firefox: hidden until hover */
+  }
+
+  .table-scroll-container:hover {
+    scrollbar-color: #d1d5db transparent;
+    /* Firefox: thumb appears on hover */
+  }
+
+  /* Chrome / Safari / Edge */
+  .table-scroll-container::-webkit-scrollbar {
+    height: 4px;
+  }
+
+  .table-scroll-container::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .table-scroll-container::-webkit-scrollbar-thumb {
+    background: transparent;
+    border-radius: 99px;
+  }
+
+  .table-scroll-container:hover::-webkit-scrollbar-thumb {
+    background: #d1d5db;
+  }
+
+  .table-scroll-container::-webkit-scrollbar-button {
+    display: none;
+  }
+
   .overflow-x-auto::-webkit-scrollbar {
     display: none;
   }
@@ -333,12 +369,33 @@
 /* ===== Component Utilities ===== */
 @layer components {
 
+  .primary-actions-btn{
+    @apply bg-surface/90 w-full rounded-3xl shadow-subtle border border-100 py-4 flex items-center justify-center gap-2 text-sm text-global-gray hover:shadow-lg dark:hover:bg-hover-dark shadow-big-btn transition;
+  }
+
+  /* Borderless, centred amount entry (add + edit transaction) */
+  .amount-input {
+    @apply bg-transparent border-0 p-0 text-center leading-none focus:outline-none;
+    -moz-appearance: textfield;
+    appearance: textfield;
+  }
+
+  .amount-input::-webkit-outer-spin-button,
+  .amount-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  .actionBtns {
+    @apply flex-shrink-0 flex justify-center relative bg-primary-dark gap-4 w-32 sm:w-32 py-2 text-sm font-semibold rounded-full text-global-gray shadow-sm;
+  }
+
   .amount {
-    @apply font-number font-semibold tabular-nums;
+    @apply font-number;
   }
 
   .account-overview-number {
-    @apply text-sm text-global-gray amount;
+    @apply text-sm text-global-gray font-semibold tabular-nums amount;
   }
 
   /* Bulk select custom checkbox */

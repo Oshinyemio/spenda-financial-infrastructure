@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <script>
+    // Prevent flash — match the real app's theme bootstrap
+    const saved = localStorage.getItem('theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    if (saved === 'dark' || (!saved && prefersDark)) document.documentElement.classList.add('dark');
+  </script>
+
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Spenda – Dashboard mockup</title>
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;900&family=Quicksand:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <script>
+    // Mirror the project's tailwind.config.js so the mockup looks like the real app
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary-accent-dark": "#5A2EB2",
+            "primary-accent-tint": "#EDE8FD",
+            "primary-accent-light": "#C4ADFA",
+            "primary-accent": "#7A42F4",
+            "secondary-accent": "#00D1B2",
+            "secondary-accent-dark": "#00A896",
+            "spenda-white": "#f9fafb",
+            "premium-black": "#12100f",
+            // finance semantics
+            "finance-savings": "#2DE1C2",
+            "finance-investments": "#007c68",
+            "finance-credit": "#FFCF96",
+            "finance-loan": "#f6814b",
+            "fixed-needs": "#FF9E7D",
+            "flexible-needs": "#6bcfff",
+            "wants": "#E0AAFF",
+            "error-soft-red": "#F56565",
+            "warning-soft-yellow": "#ECC94B",
+            "success-soft-green": "#00D1B2",
+            // CSS-var driven semantics (light/dark)
+            'bg-page': 'rgb(var(--color-bg-page) / <alpha-value>)',
+            'surface': 'rgb(var(--color-surface) / <alpha-value>)',
+            'border-subtle': 'rgb(var(--color-border-subtle) / <alpha-value>)',
+            'border-main': 'rgb(var(--color-border-main) / <alpha-value>)',
+            'text-main': 'rgb(var(--color-text-main) / <alpha-value>)',
+            'text-muted': 'rgb(var(--color-text-muted) / <alpha-value>)',
+            'text-soft': 'rgb(var(--color-text-soft) / <alpha-value>)',
+          },
+          fontFamily: {
+            body: ["Quicksand", "sans-serif"],
+            heading: ["Poppins", "sans-serif"],
+            number: ["Poppins", "monospace"],
+          },
+          boxShadow: { subtle: "0 4px 6px rgba(0,0,0,0.05), 0 1px 3px rgba(0,0,0,0.03)" },
+          maxWidth: { mainWidth: "90rem" },
+        },
+      },
+    };
+  </script>
+
+  <style>
+    :root {
+      --color-bg-page: 255 255 255;
+      --color-surface: 249 250 251;
+      --color-border-subtle: 243 244 246;
+      --color-border-main: 229 231 235;
+      --color-text-main: 17 24 39;
+      --color-text-muted: 107 114 128;
+      --color-text-soft: 156 163 175;
+      --color-header-from: 255 255 255;
+      --color-header-to: 249 250 251;
+    }
+
+    .dark {
+      --color-bg-page: 18 16 15;
+      --color-border-main: 30 28 27;
+      --color-surface: 32 32 32;
+      --color-border-subtle: 18 16 15;
+      --color-text-main: 241 245 249;
+      --color-text-muted: 148 163 184;
+      --color-text-soft: 100 116 139;
+      --color-header-from: 18 16 15;
+      --color-header-to: 18 16 15;
+    }
+
+    body {
+      font-family: Quicksand, sans-serif;
+      min-height: 100vh;
+      background: linear-gradient(to bottom right, rgb(var(--color-bg-page)), rgb(var(--color-border-main)));
+    }
+
+    .font-heading { font-family: Poppins, sans-serif; }
+    .text-global-gray { @apply text-gray-700; }
+    .amount { font-variant-numeric: tabular-nums; }
+
+    /* gauge arc transition */
+    .gauge-arc { transition: stroke-dashoffset .9s cubic-bezier(.16,1,.3,1), stroke .4s ease; }
+
+    .pillar-card { transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease; cursor: pointer; }
+    .pillar-card:hover { transform: translateY(-2px); }
+    .pillar-card[data-active="true"] { border-color: var(--pillar-color); box-shadow: 0 0 0 1px var(--pillar-color); }
+
+    .seg-btn { transition: all .2s ease; }
+  </style>
+</head>
+
+<body class="text-gray-800 dark:text-gray-200">
+
+  <!-- ===================== HEADER ===================== -->
+  <header class="border-b border-gray-100 dark:border-gray-400/20 sticky top-0 z-20 backdrop-blur"
+    style="background: linear-gradient(to bottom right, rgb(var(--color-header-from)), rgb(var(--color-header-to)/0.6));">
+    <div class="mx-auto max-w-mainWidth flex items-center justify-between px-4 sm:px-8 h-16">
+      <div class="flex items-center gap-8">
+        <span class="flex items-center gap-2">
+          <i data-lucide="strikethrough" class="w-6 h-6 text-primary-accent"></i>
+          <span class="font-heading font-semibold text-lg text-gray-700 dark:text-gray-200">Spenda</span>
+        </span>
+        <nav class="hidden lg:flex items-center gap-7 text-sm font-medium text-gray-600 dark:text-gray-300">
+          <a class="text-primary-accent font-semibold">Home</a>
+          <a class="hover:text-primary-accent transition">View</a>
+          <a class="hover:text-primary-accent transition">Budget</a>
+          <a class="hover:text-primary-accent transition">Account</a>
+        </nav>
+      </div>
+      <div class="flex items-center gap-2">
+        <button id="themeToggle" title="Toggle theme"
+          class="flex items-center justify-center w-10 h-10 rounded-full hover:bg-gray-200 dark:hover:bg-white/5 transition text-gray-500 dark:text-gray-300">
+          <i data-lucide="moon" class="w-5 h-5 dark:hidden"></i>
+          <i data-lucide="sun" class="w-5 h-5 hidden dark:block"></i>
+        </button>
+        <button class="flex items-center justify-center w-10 h-10 rounded-full hover:bg-gray-200 dark:hover:bg-white/5 transition text-gray-500 dark:text-gray-300">
+          <i data-lucide="bell" class="w-5 h-5"></i>
+        </button>
+        <span class="w-9 h-9 rounded-full bg-primary-accent/15 text-primary-accent grid place-items-center font-semibold text-sm">OO</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===================== MAIN ===================== -->
+  <main class="mx-auto max-w-mainWidth px-4 sm:px-8 py-6 sm:py-8">
+
+    <!-- Greeting + period selector -->
+    <div class="flex items-end justify-between mb-5">
+      <div>
+        <p class="text-sm text-gray-500 dark:text-gray-400 font-medium">Good evening, Ope</p>
+        <h1 class="font-heading font-semibold text-2xl sm:text-3xl text-gray-800 dark:text-gray-100">Here's how you're doing</h1>
+      </div>
+      <div class="flex items-center gap-1 bg-surface border border-gray-200 dark:border-gray-400/20 rounded-full px-1.5 py-1 shadow-subtle">
+        <button class="w-8 h-8 grid place-items-center rounded-full hover:bg-gray-200 dark:hover:bg-white/5 text-gray-500"><i data-lucide="chevron-left" class="w-4 h-4"></i></button>
+        <span class="px-2 text-sm font-semibold text-gray-700 dark:text-gray-200 whitespace-nowrap">June 2026</span>
+        <button class="w-8 h-8 grid place-items-center rounded-full hover:bg-gray-200 dark:hover:bg-white/5 text-gray-500"><i data-lucide="chevron-right" class="w-4 h-4"></i></button>
+      </div>
+    </div>
+
+    <div class="flex flex-col lg:flex-row gap-6">
+
+      <!-- ============ LEFT / MAIN COLUMN ============ -->
+      <div class="flex-1 min-w-0 space-y-6">
+
+        <!-- ===== HERO: answers "Am I on track?" ===== -->
+        <section class="bg-surface border border-gray-100 dark:border-gray-400/20 rounded-3xl shadow-subtle p-6 sm:p-8">
+          <div class="flex flex-col sm:flex-row items-center gap-6 sm:gap-10">
+
+            <!-- Gauge -->
+            <div class="relative shrink-0" style="width:220px;height:140px;">
+              <svg viewBox="0 0 220 130" width="220" height="130">
+                <path d="M20 120 A90 90 0 0 1 200 120" fill="none"
+                  stroke="rgb(var(--color-border-main))" stroke-width="16" stroke-linecap="round" />
+                <path id="gaugeArc" class="gauge-arc" d="M20 120 A90 90 0 0 1 200 120" fill="none"
+                  stroke="#7A42F4" stroke-width="16" stroke-linecap="round"
+                  pathLength="100" stroke-dasharray="100" stroke-dashoffset="100" />
+              </svg>
+              <div class="absolute inset-0 flex flex-col items-center justify-end pb-1 text-center">
+                <span id="gaugePct" class="font-heading font-bold text-4xl text-gray-800 dark:text-gray-100 amount">78%</span>
+                <span id="gaugeCaption" class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">of budget used</span>
+              </div>
+            </div>
+
+            <!-- Status + numbers -->
+            <div class="flex-1 text-center sm:text-left">
+              <div class="flex items-center justify-center sm:justify-start gap-2 mb-2">
+                <span id="statusPill" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-semibold">
+                  <i data-lucide="check-circle-2" class="w-4 h-4"></i><span id="statusText">On track</span>
+                </span>
+              </div>
+              <p id="heroLine" class="font-heading text-xl sm:text-2xl font-semibold text-gray-800 dark:text-gray-100">
+                <span class="amount">$2,340</span> spent of <span class="amount">$3,000</span>
+              </p>
+              <p id="heroHelper" class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                12 days left · you can spend about <span class="font-semibold text-gray-700 dark:text-gray-200">$55/day</span> and stay on budget
+              </p>
+
+              <!-- pace bar -->
+              <div class="mt-4">
+                <div class="relative h-2.5 rounded-full bg-gray-200 dark:bg-white/10 overflow-hidden">
+                  <div id="paceFill" class="h-full rounded-full bg-primary-accent" style="width:78%"></div>
+                </div>
+                <div class="relative h-4">
+                  <!-- "expected by now" marker -->
+                  <div id="paceMarker" class="absolute -top-3.5 flex flex-col items-center -translate-x-1/2" style="left:60%">
+                    <span class="w-0.5 h-3.5 bg-gray-400 dark:bg-gray-500"></span>
+                    <span class="text-[10px] text-gray-400 dark:text-gray-500 whitespace-nowrap mt-0.5">on-pace</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== THREE PILLARS (always visible together) ===== -->
+        <section class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+
+          <!-- Spending -->
+          <button class="pillar-card text-left bg-surface border border-gray-100 dark:border-gray-400/20 rounded-3xl shadow-subtle p-5"
+            data-mode="spending" style="--pillar-color:#7A42F4">
+            <div class="flex items-center justify-between mb-3">
+              <span class="flex items-center gap-2">
+                <span class="w-9 h-9 rounded-xl grid place-items-center" style="background:#7A42F415;color:#7A42F4">
+                  <i data-lucide="trending-down" class="w-5 h-5"></i>
+                </span>
+                <span class="text-sm font-semibold text-gray-600 dark:text-gray-300">Spending</span>
+              </span>
+              <span class="pillar-badge text-xs font-semibold px-2 py-0.5 rounded-full">78%</span>
+            </div>
+            <p class="font-heading text-xl font-semibold text-gray-800 dark:text-gray-100 amount">$2,340 <span class="text-sm font-medium text-gray-400">/ $3,000</span></p>
+            <div class="mt-3 h-1.5 rounded-full bg-gray-200 dark:bg-white/10 overflow-hidden">
+              <div class="h-full rounded-full" style="width:78%;background:#7A42F4"></div>
+            </div>
+          </button>
+
+          <!-- Wealth -->
+          <button class="pillar-card text-left bg-surface border border-gray-100 dark:border-gray-400/20 rounded-3xl shadow-subtle p-5"
+            data-mode="wealth" style="--pillar-color:#00D1B2">
+            <div class="flex items-center justify-between mb-3">
+              <span class="flex items-center gap-2">
+                <span class="w-9 h-9 rounded-xl grid place-items-center" style="background:#00D1B215;color:#00A896">
+                  <i data-lucide="trending-up" class="w-5 h-5"></i>
+                </span>
+                <span class="text-sm font-semibold text-gray-600 dark:text-gray-300">Wealth</span>
+              </span>
+              <span class="pillar-badge text-xs font-semibold px-2 py-0.5 rounded-full">65%</span>
+            </div>
+            <p class="font-heading text-xl font-semibold text-gray-800 dark:text-gray-100 amount">$520 <span class="text-sm font-medium text-gray-400">/ $800</span></p>
+            <div class="mt-3 h-1.5 rounded-full bg-gray-200 dark:bg-white/10 overflow-hidden">
+              <div class="h-full rounded-full" style="width:65%;background:#00D1B2"></div>
+            </div>
+          </button>
+
+          <!-- Liabilities -->
+          <button class="pillar-card text-left bg-surface border border-gray-100 dark:border-gray-400/20 rounded-3xl shadow-subtle p-5"
+            data-mode="liabilities" style="--pillar-color:#f6814b">
+            <div class="flex items-center justify-between mb-3">
+              <span class="flex items-center gap-2">
+                <span class="w-9 h-9 rounded-xl grid place-items-center" style="background:#f6814b15;color:#f6814b">
+                  <i data-lucide="trending-up-down" class="w-5 h-5"></i>
+                </span>
+                <span class="text-sm font-semibold text-gray-600 dark:text-gray-300">Liabilities</span>
+              </span>
+              <span class="pillar-badge text-xs font-semibold px-2 py-0.5 rounded-full">85%</span>
+            </div>
+            <p class="font-heading text-xl font-semibold text-gray-800 dark:text-gray-100 amount">$850 <span class="text-sm font-medium text-gray-400">/ $1,000</span></p>
+            <div class="mt-3 h-1.5 rounded-full bg-gray-200 dark:bg-white/10 overflow-hidden">
+              <div class="h-full rounded-full" style="width:85%;background:#f6814b"></div>
+            </div>
+          </button>
+        </section>
+
+        <!-- ===== TREND CHART (toggle now drives it, above the chart) ===== -->
+        <section class="bg-surface border border-gray-100 dark:border-gray-400/20 rounded-3xl shadow-subtle p-5 sm:p-6">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
+            <div>
+              <h3 id="chartTitle" class="font-heading font-semibold text-gray-800 dark:text-gray-100">Spending vs budget</h3>
+              <p class="text-xs text-gray-500 dark:text-gray-400">Last 6 months</p>
+            </div>
+
+            <!-- mode = detail filter -->
+            <div class="inline-flex bg-gray-100 dark:bg-white/5 rounded-full p-1">
+              <button class="seg-btn mode-seg px-4 py-1.5 rounded-full text-xs font-semibold" data-mode="spending">Spending</button>
+              <button class="seg-btn mode-seg px-4 py-1.5 rounded-full text-xs font-semibold" data-mode="wealth">Wealth</button>
+              <button class="seg-btn mode-seg px-4 py-1.5 rounded-full text-xs font-semibold" data-mode="liabilities">Liabilities</button>
+            </div>
+          </div>
+          <div class="h-64"><canvas id="barChart"></canvas></div>
+        </section>
+
+        <!-- ===== RING (mobile only — promoted above account list) ===== -->
+        <section class="lg:hidden bg-surface border border-gray-100 dark:border-gray-400/20 rounded-3xl shadow-subtle p-6">
+          <h3 class="font-heading font-semibold text-gray-800 dark:text-gray-100 mb-3" id="ringTitleSm">Where it's going</h3>
+          <div class="h-56"><canvas id="ringChartSm"></canvas></div>
+        </section>
+
+        <!-- ===== ACCOUNTS (compact, always visible — no longer hidden behind a toggle) ===== -->
+        <section>
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="font-heading font-semibold text-gray-800 dark:text-gray-100">Accounts</h3>
+            <button class="text-xs font-semibold text-primary-accent flex items-center gap-1">View all <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i></button>
+          </div>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <div class="bg-surface border border-gray-100 dark:border-gray-400/20 rounded-2xl shadow-subtle p-4">
+              <p class="text-xs text-gray-500 dark:text-gray-400 font-medium">Chequing</p>
+              <p class="font-heading font-semibold text-lg text-gray-800 dark:text-gray-100 amount mt-1">$2,000</p>
+            </div>
+            <div class="bg-surface border border-gray-100 dark:border-gray-400/20 rounded-2xl shadow-subtle p-4">
+              <p class="text-xs text-gray-500 dark:text-gray-400 font-medium">Savings</p>
+              <p class="font-heading font-semibold text-lg text-gray-800 dark:text-gray-100 amount mt-1">$8,450</p>
+            </div>
+            <div class="bg-surface border border-gray-100 dark:border-gray-400/20 rounded-2xl shadow-subtle p-4">
+              <p class="text-xs text-gray-500 dark:text-gray-400 font-medium">Credit card</p>
+              <p class="font-heading font-semibold text-lg text-finance-loan amount mt-1">-$1,240</p>
+            </div>
+            <div class="bg-surface border border-gray-100 dark:border-gray-400/20 rounded-2xl shadow-subtle p-4">
+              <p class="text-xs text-gray-500 dark:text-gray-400 font-medium">Net worth</p>
+              <p class="font-heading font-semibold text-lg text-secondary-accent-dark dark:text-secondary-accent amount mt-1">$31,210</p>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- ============ RIGHT COLUMN (desktop) ============ -->
+      <aside class="hidden lg:flex flex-col w-[360px] shrink-0 space-y-6">
+
+        <!-- Quick actions -->
+        <div class="grid grid-cols-2 gap-3">
+          <button class="bg-primary-accent text-white rounded-2xl py-3.5 flex items-center justify-center gap-2 text-sm font-semibold shadow-subtle hover:bg-primary-accent-dark transition">
+            <i data-lucide="plus" class="w-5 h-5"></i> Transaction
+          </button>
+          <button class="bg-surface border border-gray-100 dark:border-gray-400/20 text-gray-700 dark:text-gray-200 rounded-2xl py-3.5 flex items-center justify-center gap-2 text-sm font-semibold shadow-subtle hover:bg-gray-100 dark:hover:bg-white/5 transition">
+            <i data-lucide="sliders-horizontal" class="w-5 h-5"></i> Adjust budget
+          </button>
+        </div>
+
+        <!-- Ring chart — always open, the sidebar's real job -->
+        <div class="bg-surface border border-gray-100 dark:border-gray-400/20 rounded-3xl shadow-subtle p-6">
+          <h3 id="ringTitle" class="font-heading font-semibold text-gray-800 dark:text-gray-100 mb-4">Where it's going</h3>
+          <div class="h-52"><canvas id="ringChart"></canvas></div>
+          <div id="ringLegend" class="mt-4 space-y-2"></div>
+        </div>
+
+        <!-- Activity — persistent -->
+        <div class="bg-surface border border-gray-100 dark:border-gray-400/20 rounded-3xl shadow-subtle overflow-hidden">
+          <div class="flex items-center justify-between px-5 py-4 border-b border-gray-100 dark:border-gray-400/20">
+            <h3 class="font-heading font-semibold text-gray-800 dark:text-gray-100">Recent activity</h3>
+            <button class="text-xs font-semibold text-primary-accent">See all</button>
+          </div>
+          <div id="activityList"></div>
+        </div>
+      </aside>
+    </div>
+
+    <!-- Activity (mobile) -->
+    <section class="lg:hidden mt-6 bg-surface border border-gray-100 dark:border-gray-400/20 rounded-3xl shadow-subtle overflow-hidden">
+      <div class="flex items-center justify-between px-5 py-4 border-b border-gray-100 dark:border-gray-400/20">
+        <h3 class="font-heading font-semibold text-gray-800 dark:text-gray-100">Recent activity</h3>
+        <button class="text-xs font-semibold text-primary-accent">See all</button>
+      </div>
+      <div id="activityListSm"></div>
+    </section>
+  </main>
+
+  <script>
+    // ---------- Mock data per pillar ----------
+    const MODES = {
+      spending: {
+        title: 'Spending vs budget', ring: "Where it's going",
+        color: '#7A42F4', value: 2340, target: 3000, pct: 78,
+        caption: 'of budget used', direction: 'spend', daysLeft: 12, perDay: 55,
+        bars: [2650, 2890, 2510, 3120, 2780, 2340], budget: 3000,
+        breakdown: [
+          { label: 'Housing', value: 1100, color: '#FF9E7D' },
+          { label: 'Food', value: 520, color: '#6bcfff' },
+          { label: 'Transport', value: 310, color: '#E0AAFF' },
+          { label: 'Fun', value: 250, color: '#7A42F4' },
+          { label: 'Subscriptions', value: 160, color: '#00D1B2' },
+        ],
+      },
+      wealth: {
+        title: 'Contributions vs goal', ring: 'How wealth splits',
+        color: '#00D1B2', value: 520, target: 800, pct: 65,
+        caption: 'of monthly goal', direction: 'goal',
+        bars: [400, 450, 380, 600, 500, 520], budget: 800,
+        breakdown: [
+          { label: 'Savings', value: 320, color: '#2DE1C2' },
+          { label: 'Investments', value: 200, color: '#007c68' },
+        ],
+        helper: '$280 to go this month to hit your goal',
+      },
+      liabilities: {
+        title: 'Payments vs scheduled', ring: 'What you owe',
+        color: '#f6814b', value: 850, target: 1000, pct: 85,
+        caption: 'of payments made', direction: 'goal',
+        bars: [900, 950, 1000, 800, 1000, 850], budget: 1000,
+        breakdown: [
+          { label: 'Credit card', value: 450, color: '#FFCF96' },
+          { label: 'Loan', value: 300, color: '#f6814b' },
+          { label: 'Line of credit', value: 100, color: '#ADE8F4' },
+        ],
+        helper: '$150 left on this month\'s payment plan',
+      },
+    };
+
+    const ACTIVITY = [
+      { icon: 'shopping-cart', title: 'Loblaws', sub: 'Groceries · Today', amt: '-$84.20', color: '#6bcfff' },
+      { icon: 'coffee', title: 'Starbucks', sub: 'Fun · Yesterday', amt: '-$6.75', color: '#E0AAFF' },
+      { icon: 'piggy-bank', title: 'Savings transfer', sub: 'Wealth · Jun 14', amt: '+$200.00', color: '#2DE1C2' },
+      { icon: 'home', title: 'Rent', sub: 'Housing · Jun 12', amt: '-$1,100.00', color: '#FF9E7D' },
+      { icon: 'credit-card', title: 'Visa payment', sub: 'Liabilities · Jun 10', amt: '-$300.00', color: '#f6814b' },
+    ];
+
+    const fmt = n => '$' + n.toLocaleString('en-US');
+    const isDark = () => document.documentElement.classList.contains('dark');
+    const gridColor = () => isDark() ? 'rgba(148,163,184,.12)' : 'rgba(0,0,0,.06)';
+    const tickColor = () => isDark() ? '#94a3b8' : '#6b7280';
+    const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
+
+    let current = 'spending';
+    let barChart, ringChart, ringChartSm;
+
+    // ---------- Status logic ----------
+    function statusFor(m) {
+      // spending: under budget = good. goal: higher progress = good.
+      if (m.direction === 'spend') {
+        if (m.pct < 85) return { text: 'On track', cls: 'bg-secondary-accent/15 text-secondary-accent-dark dark:text-secondary-accent', icon: 'check-circle-2', arc: '#00D1B2' };
+        if (m.pct <= 100) return { text: 'Getting close', cls: 'bg-warning-soft-yellow/20 text-yellow-600 dark:text-warning-soft-yellow', icon: 'alert-triangle', arc: '#ECC94B' };
+        return { text: 'Over budget', cls: 'bg-error-soft-red/15 text-error-soft-red', icon: 'alert-circle', arc: '#F56565' };
+      }
+      if (m.pct >= 80) return { text: 'Ahead of plan', cls: 'bg-secondary-accent/15 text-secondary-accent-dark dark:text-secondary-accent', icon: 'check-circle-2', arc: '#00D1B2' };
+      if (m.pct >= 50) return { text: 'On track', cls: 'bg-secondary-accent/15 text-secondary-accent-dark dark:text-secondary-accent', icon: 'check-circle-2', arc: m.color };
+      return { text: 'Behind plan', cls: 'bg-warning-soft-yellow/20 text-yellow-600 dark:text-warning-soft-yellow', icon: 'alert-triangle', arc: '#ECC94B' };
+    }
+
+    // ---------- Render hero ----------
+    function renderHero(m) {
+      const s = statusFor(m);
+      document.getElementById('gaugeArc').setAttribute('stroke', s.arc);
+      document.getElementById('gaugeArc').style.strokeDashoffset = 100 - Math.min(m.pct, 100);
+      document.getElementById('gaugePct').textContent = m.pct + '%';
+      document.getElementById('gaugeCaption').textContent = m.caption;
+
+      const pill = document.getElementById('statusPill');
+      pill.className = 'inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-semibold ' + s.cls;
+      document.getElementById('statusText').textContent = s.text;
+      pill.querySelector('[data-lucide]').setAttribute('data-lucide', s.icon);
+
+      const verb = m.direction === 'spend' ? 'spent' : 'done';
+      document.getElementById('heroLine').innerHTML =
+        `<span class="amount">${fmt(m.value)}</span> ${verb} of <span class="amount">${fmt(m.target)}</span>`;
+
+      document.getElementById('heroHelper').innerHTML = m.direction === 'spend'
+        ? `${m.daysLeft} days left · you can spend about <span class="font-semibold text-gray-700 dark:text-gray-200">$${m.perDay}/day</span> and stay on budget`
+        : m.helper;
+
+      document.getElementById('paceFill').style.width = Math.min(m.pct, 100) + '%';
+      document.getElementById('paceFill').style.background = s.arc;
+      document.getElementById('paceMarker').style.display = m.direction === 'spend' ? 'flex' : 'none';
+
+      lucide.createIcons();
+    }
+
+    // ---------- Charts ----------
+    function buildBar(m) {
+      if (barChart) barChart.destroy();
+      barChart = new Chart(document.getElementById('barChart'), {
+        type: 'bar',
+        data: {
+          labels: MONTHS,
+          datasets: [
+            {
+              type: 'line', label: 'Target', data: MONTHS.map(() => m.budget),
+              borderColor: tickColor(), borderDash: [6, 6], borderWidth: 1.5,
+              pointRadius: 0, tension: 0,
+            },
+            {
+              label: m.title, data: m.bars,
+              backgroundColor: m.bars.map((v, i) => i === m.bars.length - 1 ? m.color : m.color + '66'),
+              borderRadius: 8, borderSkipped: false, barPercentage: .6,
+            },
+          ],
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => fmt(c.raw) } } },
+          scales: {
+            x: { grid: { display: false }, ticks: { color: tickColor() } },
+            y: { grid: { color: gridColor() }, ticks: { color: tickColor(), callback: v => '$' + v / 1000 + 'k' }, beginAtZero: true },
+          },
+        },
+      });
+    }
+
+    function donut(canvasId, m) {
+      return new Chart(document.getElementById(canvasId), {
+        type: 'doughnut',
+        data: {
+          labels: m.breakdown.map(b => b.label),
+          datasets: [{ data: m.breakdown.map(b => b.value), backgroundColor: m.breakdown.map(b => b.color), borderWidth: 0 }],
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false, cutout: '68%',
+          plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => `${c.label}: ${fmt(c.raw)}` } } },
+        },
+      });
+    }
+
+    function buildRings(m) {
+      if (ringChart) ringChart.destroy();
+      if (ringChartSm) ringChartSm.destroy();
+      ringChart = donut('ringChart', m);
+      ringChartSm = donut('ringChartSm', m);
+      document.getElementById('ringTitle').textContent = m.ring;
+      document.getElementById('ringTitleSm').textContent = m.ring;
+      document.getElementById('ringLegend').innerHTML = m.breakdown.map(b => `
+        <div class="flex items-center justify-between text-sm">
+          <span class="flex items-center gap-2 text-gray-600 dark:text-gray-300">
+            <span class="w-2.5 h-2.5 rounded-full" style="background:${b.color}"></span>${b.label}
+          </span>
+          <span class="font-semibold text-gray-700 dark:text-gray-200 amount">${fmt(b.value)}</span>
+        </div>`).join('');
+    }
+
+    // ---------- Activity ----------
+    function renderActivity() {
+      const html = ACTIVITY.map(a => `
+        <div class="flex items-center justify-between px-5 py-3 border-b border-gray-100 dark:border-gray-400/20 last:border-0">
+          <div class="flex items-center gap-3 min-w-0">
+            <span class="w-9 h-9 rounded-full grid place-items-center shrink-0" style="background:${a.color}22;color:${a.color}">
+              <i data-lucide="${a.icon}" class="w-4 h-4"></i>
+            </span>
+            <div class="min-w-0">
+              <p class="text-sm font-semibold text-gray-700 dark:text-gray-200 truncate">${a.title}</p>
+              <p class="text-xs text-gray-500 dark:text-gray-400 truncate">${a.sub}</p>
+            </div>
+          </div>
+          <span class="text-sm font-semibold amount ${a.amt.startsWith('+') ? 'text-secondary-accent-dark dark:text-secondary-accent' : 'text-gray-700 dark:text-gray-200'}">${a.amt}</span>
+        </div>`).join('');
+      document.getElementById('activityList').innerHTML = html;
+      document.getElementById('activityListSm').innerHTML = html;
+    }
+
+    // ---------- Active state for pillars + segmented toggle ----------
+    function syncActive(mode) {
+      const m = MODES[mode];
+      document.querySelectorAll('.pillar-card').forEach(c => {
+        const active = c.dataset.mode === mode;
+        c.dataset.active = active;
+        const badge = c.querySelector('.pillar-badge');
+        const pc = getComputedStyle(c).getPropertyValue('--pillar-color').trim();
+        badge.style.background = active ? pc : pc + '1a';
+        badge.style.color = active ? '#fff' : pc;
+      });
+      document.querySelectorAll('.mode-seg').forEach(b => {
+        const active = b.dataset.mode === mode;
+        b.style.background = active ? m.color : 'transparent';
+        b.style.color = active ? '#fff' : (isDark() ? '#cbd5e1' : '#4b5563');
+      });
+      document.getElementById('chartTitle').textContent = m.title;
+    }
+
+    function setMode(mode) {
+      current = mode;
+      const m = MODES[mode];
+      renderHero(m);
+      buildBar(m);
+      buildRings(m);
+      syncActive(mode);
+    }
+
+    // ---------- Wire up ----------
+    document.querySelectorAll('.pillar-card, .mode-seg').forEach(el =>
+      el.addEventListener('click', () => setMode(el.dataset.mode)));
+
+    document.getElementById('themeToggle').addEventListener('click', () => {
+      document.documentElement.classList.toggle('dark');
+      localStorage.setItem('theme', isDark() ? 'dark' : 'light');
+      setMode(current); // recolor charts for theme
+    });
+
+    renderActivity();
+    setMode('spending');
+    lucide.createIcons();
+  </script>
+</body>
+
+</html>
